@@ -19,9 +19,9 @@ class Menu{
    public function cls(){
       if (strtoupper(substr(PHP_OS, 0, 3)) === 'WIN') {
     // Estás en Windows
-    		system("cls");
+            popen('cls', 'w');//system("cls");
 		} else {
-    			system("clear");
+    		system("clear");
       }
    }
 
@@ -40,8 +40,7 @@ class Menu{
     }
 
     public function elegirUsuario(){
-		  self::cls();        
-        self::writeln("Elige un tipo de usuario: ");
+		self::writeln("Elige un tipo de usuario: ");
         self::writeln("0. Salir");
         self::writeln("1. Paricipante");
         self::writeln("2. Administrador");
@@ -51,7 +50,12 @@ class Menu{
 
     public function ABMCarreras(){
         self::writeln("Menu ABM Carreras");
-        self::writeln("");
+        self::writeln("0. Volver al menu anterior");
+        self::writeln("1. Alta carrera");
+        self::writeln("2. Baja carrera");
+        self::writeln("3. Modificar carrera");
+        self::writeln("4. Mostrar carreras");
+        return self::readln("opción: ");  
     }
 
     public function Pagos(){

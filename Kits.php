@@ -3,12 +3,18 @@
 
 class Kits {
 
-    private $chip;
-    private $numero;
-    private $remera;
-    private $medalla;
+    private $chip = FALSE;
+    private $numero = FALSE;
+    private $remera= FALSE;
+    private $medalla = FALSE;
 
-    
+    public function mostrar(){
+        echo("El kit incluye: ");
+        if ($this->chip) {echo ("chip ");}
+        if ($this->numero) {echo ("número ");}
+        if ($this->remera) {echo ("remera ");}
+        if ($this->medalla) {echo ("medalla.");}
+    }
 
     /**
      * Get the value of chip
@@ -42,5 +48,53 @@ class Kits {
     public function getMedalla()
     {
         return $this->medalla;
+    }
+
+     /**
+     * Set the value of chip
+     *
+     * @return  self
+     */ 
+    public function setChip($chip)
+    {
+        $this->chip = $chip;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of numero
+     *
+     * @return  self
+     */ 
+    public function setNumero($numero)
+    {
+        $this->numero = $numero;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of remera
+     *
+     * @return  self
+     */ 
+    public function setRemera($remera)
+    {
+        $this->remera = $remera;
+
+        return $this;
+    }
+
+    /**
+     * Set the value of medalla
+     *
+     * @return  self
+     */ 
+    public function setMedalla($medalla)
+    {
+        $this->medalla = $medalla;
+
+        return $this;
     }
 }

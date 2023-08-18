@@ -12,6 +12,32 @@ class AtletaManager extends ArrayIdManager{
       self::agregar(new Atleta(self::getNuevoId(), 'José', 'jose@gmail.com','12/03/2001'));
     }
     
+    
+     public function getJSON() {
+
+            $jsonAtletas = [];
+            $atletas= $this->getArreglo();            
+            foreach ($atletas as $atleta) {
+                $jsonAtletas[] = json_encode($atleta);
+                echo(json_encode($atleta));
+                var_dump($atleta);
+            }
+
+            return '{"atletas" : ['.implode(',', $jsonAtletas).'],'.$this->getIds().'}';
+        }
+        
+       
+    //Crea el arreglo desde el archivo de texto
+     public function setJSON($datos){
+         $atletas = $jsonDatos->atletas;
+         foreach ($atletas as $atleta) {
+                $nuevoAtleta = new Atleta($atleta->id,$atleta->email, $atleta->fechaNacimiento);
+                $this->agregarJSON($nuevoAtleta);
+            }
+    
+    }
+    
+            
     // Actualizar los datos de un atleta por su ID
     
     public function actualizaratleta($id, $nombre, $email) {

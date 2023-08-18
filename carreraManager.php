@@ -9,12 +9,14 @@ class CarreraManager extends ArrayIdManager{
     
 	// Agregar carreras  ($id,$nombre,$circuito,$fecha,$precio,$kits
 	public function cargaInicial(){
-    	self::agregar(new Carrera(self::getNuevoId(),'Desafio del Lago', 'el dique','04/06/2023','$5000', null));
-    	self::agregar(new Carrera(self::getNuevoId(),'Desafio de las Animas', 'las animas','04/07/2023','$7000',null));
-    	self::agregar(new Carrera(self::getNuevoId(),'Pioneros', 'Los pioneros','03/08/2023','$3000',null));
+    	self::agregar(new Carrera(self::getNuevoId(),'Desafio del Lago', 'el dique','04/06/2023','$5000', new Kits()));
+    	self::agregar(new Carrera(self::getNuevoId(),'Desafio de las Animas', 'las animas','04/07/2023','$7000',new Kits()));
+    	self::agregar(new Carrera(self::getNuevoId(),'Pioneros', 'Los pioneros','03/08/2023','$3000',new Kits()));
     	
    } 	
     
+   
+   
     // Actualizar los datos de un carrera por su ID
     public function actualizarCarrera($id, $nombre, $circuito,$fecha,$precio,$kits) {
 	 	$carreras = self::getArreglo();        
@@ -30,12 +32,39 @@ class CarreraManager extends ArrayIdManager{
         }
     }
     
+   public function getJSON() {
+
+            $jsonCarreras = [];
+            $carreras = $this->getArreglo();            
+            foreach ($carreras as $carrera) {
+                $jsonCarreras[] = json_encode($carrera);
+            }
+
+            return '{"carreras" : ['.implode(',', $jsonCarreras).'],'.$this->getIds().'}';
+   }
+   
+   
+   //Del archivo de texto crea el arreglo de carreras co carreras ya existentes   
+   public function setJSON($datos){
+         $carreras = $jsonDatos->carreras;
+            foreach ($carreras as $carrera) {
+                $kits = $carrera->kits;
+                $nuevoKits = new Kits($kits->chip,$kits->numero,$kits->remera,$kits->medalla);      
+                $nuevaCarrera = new Carrera($carrera->id,$carrera->nombre, $carrera->circuito,$carrera->fecha,$carrera->precio,$nuevoKits);
+                $this->agregarJSON($nuevaCarrera);
+            }
+    
+    }   
+   
    public function mostrarCarreras(){
 		$carreras = self::getArreglo();
       foreach ($carreras as $carrera) {
-    		echo "ID: " . $carrera->getId() . ", Nombre: " . $carrera->getNombre() . ", Fecha: " . $carrera->getFecha() . ", Precio: " .$carrera->getPrecio();
-    		echo(PHP_EOL);
+    		echo "ID: " . $carrera->getId() . ", Nombre: " . $carrera->getNombre() . ", Circuito: " . $carrera->getCircuito() .", Fecha: " . $carrera->getFecha() . ", Precio: " .$carrera->getPrecio();
+            echo(PHP_EOL);
+            $carrera->getKits()->mostrar();
+            echo(PHP_EOL);
       }    
+      echo(PHP_EOL);
     }
 
     
