@@ -1,40 +1,50 @@
 <?php
-require_once('Atleta.php');
-require_once('ArrayIdManager.php');
+require_once('atleta.php');
+require_once('arrayIdManager.php');
 
 class AtletaManager extends ArrayIdManager{
     
 	// Agregar atletas que ya estén en el sistema    
     public function cargaInicial(){
-    	self::agregar(new Atleta(self::getNuevoId(), 'Juan', 'juan@example.com','04/06/1999'));
+      self::agregar(new Atleta(self::getNuevoId(), 'Juan', 'juan@example.com','04/06/1999'));
       self::agregar(new Atleta(self::getNuevoId(), 'María', 'maria@example.com','14/08/2000'));
       self::agregar(new Atleta(self::getNuevoId(), 'Pedro', 'pedro@example.com','12/03/1992'));
       self::agregar(new Atleta(self::getNuevoId(), 'José', 'jose@gmail.com','12/03/2001'));
     }
     
     
-     public function getJSON() {
-
-            $jsonAtletas = [];
-            $atletas= $this->getArreglo();            
-            foreach ($atletas as $atleta) {
-                $jsonAtletas[] = json_encode($atleta);
-                echo(json_encode($atleta));
-                var_dump($atleta);
-            }
-
-            return '{"atletas" : ['.implode(',', $jsonAtletas).'],'.$this->getIds().'}';
+    public function getJSON() {
+        $jsonAtletas = [];
+        $atletas = $this->getArreglo();
+    
+        foreach ($atletas as $atleta) {
+            $jsonAtletas[] = $atleta->toArray(); //método "toArray()" en la clase Atleta
         }
+    
+        $jsonString = json_encode($jsonAtletas, JSON_PRETTY_PRINT);
+    
+        $ids = $this->getIds();  // devuelve una cadena JSON válida con los IDs
+    
+        $finalJson = [
+            "atletas" => $jsonAtletas,
+            "ids" => json_decode($ids) // Decodificar la cadena JSON de IDs
+        ];
+    
+        return json_encode($finalJson, JSON_PRETTY_PRINT);
+    }
         
        
     //Crea el arreglo desde el archivo de texto
-     public function setJSON($datos){
-         $atletas = $jsonDatos->atletas;
-         foreach ($atletas as $atleta) {
-                $nuevoAtleta = new Atleta($atleta->id,$atleta->email, $atleta->fechaNacimiento);
+    public function setJSON($datos){
+         $atletasDatos = json_decode($datos,1);
+         if (isset($atletasDatos['atletas'])) {
+            $atletas = $atletasDatos['atletas'];
+            foreach ($atletas as $atleta) {
+                $nuevoAtleta = new Atleta($atleta['id'],$atleta['nombre'],$atleta['email'], $atleta['fechaNacimiento']);
                 $this->agregarJSON($nuevoAtleta);
             }
-    
+            $this->setIds($atletasDatos['ids']);
+         }
     }
     
             

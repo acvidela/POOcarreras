@@ -1,6 +1,6 @@
 <?php
-require_once('Carrera.php');
-require_once('ArrayIdManager.php');
+require_once('carrera.php');
+require_once('arrayIdManager.php');
 
 
 
@@ -14,6 +14,26 @@ class CarreraManager extends ArrayIdManager{
     	self::agregar(new Carrera(self::getNuevoId(),'Pioneros', 'Los pioneros','03/08/2023','$3000',new Kits()));
     	
    } 	
+    
+   public function getJSON() {
+    $jsonCarrera = [];
+    $carrera = $this->getArreglo();
+
+    foreach ($carrera as $carrera) {
+        $jsonCarrera[] = $carrera->toArray(); // Asumiendo que tienes un método "toArray()" en la clase Atleta
+    }
+
+    $jsonString = json_encode($jsonCarrera, JSON_PRETTY_PRINT);
+
+    $ids = $this->getIds(); // Supongo que esta función devuelve una cadena JSON válida con los IDs
+
+    $finalJson = [
+        "carreras" => $jsonCarrera,
+        "ids" => json_decode($ids) // Decodificar la cadena JSON de IDs
+    ];
+
+    return json_encode($finalJson, JSON_PRETTY_PRINT);
+}
     
    
    
@@ -32,26 +52,20 @@ class CarreraManager extends ArrayIdManager{
         }
     }
     
-   public function getJSON() {
 
-            $jsonCarreras = [];
-            $carreras = $this->getArreglo();            
-            foreach ($carreras as $carrera) {
-                $jsonCarreras[] = json_encode($carrera);
-            }
-
-            return '{"carreras" : ['.implode(',', $jsonCarreras).'],'.$this->getIds().'}';
-   }
    
-   
-   //Del archivo de texto crea el arreglo de carreras co carreras ya existentes   
-   public function setJSON($datos){
-         $carreras = $jsonDatos->carreras;
-            foreach ($carreras as $carrera) {
-                $kits = $carrera->kits;
-                $nuevoKits = new Kits($kits->chip,$kits->numero,$kits->remera,$kits->medalla);      
-                $nuevaCarrera = new Carrera($carrera->id,$carrera->nombre, $carrera->circuito,$carrera->fecha,$carrera->precio,$nuevoKits);
-                $this->agregarJSON($nuevaCarrera);
+   //Del archivo de texto crea el arreglo de carreras con carreras ya existentes   
+    public function setJSON($datos){
+            $carrerasDatos = json_decode($datos,1);
+            if (isset($carrerasDatos['carreras'])){
+                $carreras = $carrerasDatos['carreras'];     
+                foreach ($carreras as $carrera) {
+                    $kits = $carrera['kits'];
+                    $nuevoKits = new Kits($kits['chip'],$kits['numero'],$kits['remera'],$kits['medalla']);      
+                    $nuevaCarrera = new Carrera($carrera['id'],$carrera['nombre'], $carrera['circuito'],$carrera['fecha'],$carrera['precio'],$nuevoKits);
+                    $this->agregarJSON($nuevaCarrera);
+                }
+                $this->setIds($carrerasDatos['ids']);
             }
     
     }   
