@@ -1,5 +1,5 @@
 <?php
- require_once('Menu.php');
+ require_once('menu.php');
  require_once('atletaManager.php'); 
  require_once('carreraManager.php');
   
@@ -10,7 +10,32 @@
         $fechaNacimiento =  $menu->readln("Ingrese fecha de nacimiento, con el formato dd/mm/yyyy: ");
         $atleta = new Atleta($atletaManager->getNuevoId(),$nombre,$email,$fechaNacimiento);
         $atletaManager->agregar($atleta);
+
+         // Convertir el objeto $atleta a un array asociativo
+    $atletaArray = [
+        "id" => $atleta->getId(),
+        "nombre" => $atleta->getNombre(),
+        "email" => $atleta->getEmail(),
+        "fechaNacimiento" => $atleta->getFechaNacimiento()
+    ];
   }
+   /* // Obtener los datos actuales del archivo JSON (si existe)
+    $jsonData = [];
+    $jsonFile = "Datos/atletas.json";
+    if (file_exists($jsonFile)) {
+        $jsonData = json_decode(file_get_contents($jsonFile), true);
+    }
+
+    // Agregar el nuevo atleta al array de datos
+    $jsonData[] = $atletaArray;
+
+    // Convertir el array a formato JSON
+    $jsonString = json_encode($jsonData, JSON_PRETTY_PRINT);
+
+    // Escribir el JSON en el archivo
+    file_put_contents($jsonFile, $jsonString);
+}
+*/
  
   //Dar de alta una carrera  $id,$nombre,$circuito,$fecha,$precio,$kits
   function altaCarrera($menu,$carreraManager){
@@ -246,13 +271,16 @@ $menu->cls();
 $menu->pantallaBienvenida('Es-Tan-Dil');
 
 $atletaManager = new AtletaManager();
-$atletaManager->cargaInicial();
-$atletaManager->grabar("datos/atletas.json");
+
+//$atletaManager->cargaInicial();
+//$atletaManager->grabar("datos/atletas.json");
+$atletaManager->leer("datos/atletas.json");
 
 $carreraManager = new CarreraManager();
-$carreraManager->cargaInicial();
-$carreraManager->grabar("datos/carreras.json");
 
+//$carreraManager->cargaInicial();
+//$carreraManager->grabar("datos/carreras.json");
+$carreraManager->leer("datos/carreras.json");
 
 // Leer el tipo de usuario seleccionado
 $opcionTipoUsuario = $menu->elegirUsuario();  //0 salir, 1 participante, 2 administrador
@@ -273,6 +301,8 @@ while ($opcionTipoUsuario != 0){
         $opcionTipoUsuario = $menu->elegirUsuario();  //0 salir, 1 participante, 2 administrador;
 
     }
+    $atletaManager->grabar("datos/atletas.json");
+    $carreraManager->grabar("datos/carreras.json");
     $menu->pantallaDespedida();
 ?>
  
